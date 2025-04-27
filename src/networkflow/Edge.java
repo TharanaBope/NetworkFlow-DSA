@@ -1,11 +1,7 @@
 package networkflow;
 
-/**
- * Represents an edge in the flow network.
- * 
- * Student ID: [Your Student ID]
- * Name: [Your Name]
- */
+// Represents an edge in the flow network.
+
 public class Edge {
     private final int from;       // Source vertex
     private final int to;         // Destination vertex
@@ -14,7 +10,6 @@ public class Edge {
     
     /**
      * Constructs an edge with the specified source, destination, and capacity.
-     * 
      * @param from     The source vertex
      * @param to       The destination vertex
      * @param capacity The maximum capacity of the edge
@@ -28,7 +23,6 @@ public class Edge {
     
     /**
      * Returns the source vertex of this edge.
-     * 
      * @return The source vertex
      */
     public int getFrom() {
@@ -37,7 +31,6 @@ public class Edge {
     
     /**
      * Returns the destination vertex of this edge.
-     * 
      * @return The destination vertex
      */
     public int getTo() {
@@ -46,7 +39,6 @@ public class Edge {
     
     /**
      * Returns the maximum capacity of this edge.
-     * 
      * @return The capacity
      */
     public int getCapacity() {
@@ -54,8 +46,7 @@ public class Edge {
     }
     
     /**
-     * Returns the current flow through this edge.
-     * 
+     * Returns the current flow through this edge. 
      * @return The flow
      */
     public int getFlow() {
@@ -64,7 +55,6 @@ public class Edge {
     
     /**
      * Sets the flow through this edge.
-     * 
      * @param flow The new flow value
      */
     public void setFlow(int flow) {
@@ -72,8 +62,7 @@ public class Edge {
     }
     
     /**
-     * Returns the residual capacity of this edge.
-     * 
+     * Returns the residual capacity of this edge. 
      * @return The residual capacity (capacity - flow)
      */
     public int getResidualCapacity() {
@@ -82,9 +71,9 @@ public class Edge {
     
     /**
      * Returns a string representation of this edge.
-     * 
      * @return A string in the format "from -> to (flow/capacity)"
      */
+    
     @Override
     public String toString() {
         return from + " -> " + to + " (" + flow + "/" + capacity + ")";
