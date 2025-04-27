@@ -1,17 +1,17 @@
 package networkflow;
 
-// Represents an edge in the flow network.
+//Represents an edge in the flow network.
 
 public class Edge {
-    private final int from;       // Source vertex
-    private final int to;         // Destination vertex
-    private final int capacity;   // Maximum capacity of the edge
-    private int flow;             // Current flow through the edge
+    private final int from;  //Source vertex
+    private final int to; // Destination vertex
+    private final int capacity; //Maximum capacity of the edge
+    private int flow;  //Current flow through the edge
     
     /**
      * Constructs an edge with the specified source, destination, and capacity.
-     * @param from     The source vertex
-     * @param to       The destination vertex
+     * @param from  The source vertex
+     * @param to  The destination vertex
      * @param capacity The maximum capacity of the edge
      */
     public Edge(int from, int to, int capacity) {
@@ -73,7 +73,7 @@ public class Edge {
      * Returns a string representation of this edge.
      * @return A string in the format "from -> to (flow/capacity)"
      */
-    
+
     @Override
     public String toString() {
         return from + " -> " + to + " (" + flow + "/" + capacity + ")";
