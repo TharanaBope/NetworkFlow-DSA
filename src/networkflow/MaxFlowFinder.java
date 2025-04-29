@@ -4,20 +4,20 @@ import java.util.*;
 
 //Implementation of the Edmonds-Karp algorithm for finding the maximum flow in a network.
 
-public class MaxFlowFinder {
-    private final FlowNetwork network;
-    private final int source;
-    private final int sink;
-    private boolean detailedLogging; // Added boolean to control detailed logging
-    private List<PathInfo> augmentingPaths; // Added to store path information
-    private long startTime; // Added for timing
+public class MaxFlowFinder {//Class for finding the maximum flow in a network using the Edmonds-Karp algorithm
+    private final FlowNetwork network; //The flow network to find the maximum flow in
+    private final int source; //The source vertex
+    private final int sink; //The sink vertex
+    private boolean detailedLogging; //Added boolean to control detailed logging
+    private List<PathInfo> augmentingPaths; //Added to store path information
+    private long startTime; //Added for timing
     
-    private static class PathInfo {
-        List<Edge> path;
-        int flow;
-        int bottleneck;
+    private static class PathInfo {//Class for storing path information
+        List<Edge> path; //The path
+        int flow; //The flow
+        int bottleneck; //The bottleneck capacity
         
-        PathInfo(List<Edge> path, int flow, int bottleneck) {
+        PathInfo(List<Edge> path, int flow, int bottleneck) {//Constructor for the PathInfo class   
             this.path = path;
             this.flow = flow;
             this.bottleneck = bottleneck;
@@ -30,7 +30,7 @@ public class MaxFlowFinder {
      * @param source The source vertex (typically 0)
      * @param sink The sink vertex (typically vertices-1)
      */
-    public MaxFlowFinder(FlowNetwork network, int source, int sink) {
+    public MaxFlowFinder(FlowNetwork network, int source, int sink) {//Constructor for the MaxFlowFinder class
         this(network, source, sink, true); // Default to detailed logging
     }
     
@@ -41,12 +41,12 @@ public class MaxFlowFinder {
      * @param sink The sink vertex (typically vertices-1)
      * @param detailedLogging Whether to log detailed information about each iteration
      */
-    public MaxFlowFinder(FlowNetwork network, int source, int sink, boolean detailedLogging) {
-        this.network = network;
-        this.source = source;
-        this.sink = sink;
-        this.detailedLogging = detailedLogging;
-        this.augmentingPaths = new ArrayList<>();
+    public MaxFlowFinder(FlowNetwork network, int source, int sink, boolean detailedLogging) {//Constructor for the MaxFlowFinder class
+        this.network = network;//Set the network    
+        this.source = source;//Set the source
+        this.sink = sink;//Set the sink
+        this.detailedLogging = detailedLogging;//Set the detailed logging
+        this.augmentingPaths = new ArrayList<>();//Set the augmenting paths
     }
     
     /**
@@ -54,19 +54,19 @@ public class MaxFlowFinder {
      * (using BFS to find augmenting paths). 
      * @return The maximum flow value
      */
-    public int findMaxFlow() {
-        int maxFlow = 0;
-        startTime = System.nanoTime();
-        augmentingPaths.clear();
+    public int findMaxFlow() {//Method to find the maximum flow in the network using the Edmonds-Karp algorithm
+        int maxFlow = 0;//Set the maximum flow to 0
+        startTime = System.nanoTime();//Set the start time
+        augmentingPaths.clear();//Clear the augmenting paths
         
         //Create a residual graph
-        FlowNetwork residualGraph = network.createResidualGraph();
+        FlowNetwork residualGraph = network.createResidualGraph();//Create the residual graph
         
         //Find augmenting paths and update flow
-        List<Edge> path;
-        int iteration = 1;
+        List<Edge> path;//Set the path
+        int iteration = 1;//Set the iteration
         
-        while ((path = findAugmentingPath(residualGraph)) != null) {
+        while ((path = findAugmentingPath(residualGraph)) != null) {//While there is an augmenting path
             //Find the bottleneck capacity
             int bottleneckCapacity = findBottleneckCapacity(path);
             
@@ -89,8 +89,8 @@ public class MaxFlowFinder {
             iteration++;
         }
         
-        if (network.getVertices() < 1000) {
-            printResults(maxFlow);
+        if (network.getVertices() < 1000) {//If the network is small
+            printResults(maxFlow);//Print the results
         } else {
             // For large networks, only print the maximum flow
             System.out.println("\nMaximum Flow: " + maxFlow);
@@ -103,7 +103,7 @@ public class MaxFlowFinder {
      * @param residualGraph The residual graph
      * @return A list of edges forming an augmenting path, or null if no path exists
      */
-    private List<Edge> findAugmentingPath(FlowNetwork residualGraph) {
+    private List<Edge> findAugmentingPath(FlowNetwork residualGraph) {//Method to find an augmenting path from source to sink in the residual graph using BFS
         //Initialize BFS data structures
         boolean[] visited = new boolean[residualGraph.getVertices()];
         Map<Integer, Edge> edgeTo = new HashMap<>();
@@ -168,7 +168,7 @@ public class MaxFlowFinder {
      * @param path  The augmenting path
      * @param bottleneckCapacity The bottleneck capacity
      */
-    private void updateFlow(List<Edge> path, int bottleneckCapacity) {
+    private void updateFlow(List<Edge> path, int bottleneckCapacity) {//Method to update the flow along an augmenting path
         //Find the corresponding edges in the original network
         for (Edge residualEdge : path) {
             int from = residualEdge.getFrom();
@@ -197,8 +197,8 @@ public class MaxFlowFinder {
         }
     }
     
-    private void printResults(int maxFlow) {
-        long endTime = System.nanoTime();
+    private void printResults(int maxFlow) {//Method to print the results
+        long endTime = System.nanoTime();//Set the end time
         double runtimeMs = (endTime - startTime) / 1_000_000.0; // Convert to milliseconds
         
         System.out.println("============================================================");

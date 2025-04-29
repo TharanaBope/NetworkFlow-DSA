@@ -85,7 +85,7 @@ public class FlowNetwork {
                 residualGraph.addEdge(to, from, flow);
             }
         }
-        
+        //Return the residual graph
         return residualGraph;
     }
     
@@ -93,11 +93,13 @@ public class FlowNetwork {
      * Returns a string representation of this flow network. 
      * @return A string representation of the network
      */
+
+    //Override the toString method to print the flow network
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Flow Network with ").append(vertices).append(" vertices:\n");
-        
+        //Iterate through the adjacency list and print the edges
         for (int i = 0; i < vertices; i++) {
             if (!adjacencyList.get(i).isEmpty()) {
                 sb.append("Vertex ").append(i).append(":\n");

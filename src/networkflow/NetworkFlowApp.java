@@ -6,10 +6,10 @@ import java.util.Scanner;
 
 //Main application class for the Network Flow algorithm implementation.
 
-public class NetworkFlowApp {
+public class NetworkFlowApp {//Main application class for the Network Flow algorithm implementation
     
     // Base path for benchmark files
-    private static final String BENCHMARKS_PATH = "benchmarks/";
+    private static final String BENCHMARKS_PATH = "benchmarks/";    
     
     /**
      * Main method to run the application.
