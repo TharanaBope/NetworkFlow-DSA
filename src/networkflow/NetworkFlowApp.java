@@ -54,7 +54,7 @@ public class NetworkFlowApp {
             MaxFlowFinder maxFlowFinder = new MaxFlowFinder(network, source, sink, !isLargeNetwork);
             
             if (isLargeNetwork) {
-                System.out.println("Large network detected. Detailed logging disabled to conserve memory.");
+                System.out.println("Large network detected (more than 1000 vertices). Detailed logging disabled to conserve memory.");
             }
             
             //Find the maximum flow
