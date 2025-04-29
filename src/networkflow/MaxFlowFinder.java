@@ -8,7 +8,7 @@ public class MaxFlowFinder {
     private final FlowNetwork network;
     private final int source;
     private final int sink;
-    private final StringBuilder log;
+    private boolean detailedLogging; // Added boolean to control detailed logging
     
     /**
      * Constructs a maximum flow finder for the specified network.
@@ -17,10 +17,21 @@ public class MaxFlowFinder {
      * @param sink The sink vertex (typically vertices-1)
      */
     public MaxFlowFinder(FlowNetwork network, int source, int sink) {
+        this(network, source, sink, true); // Default to detailed logging
+    }
+    
+    /**
+     * Constructs a maximum flow finder for the specified network with logging control.
+     * @param network The flow network
+     * @param source The source vertex (typically 0)
+     * @param sink The sink vertex (typically vertices-1)
+     * @param detailedLogging Whether to log detailed information about each iteration
+     */
+    public MaxFlowFinder(FlowNetwork network, int source, int sink, boolean detailedLogging) {
         this.network = network;
         this.source = source;
         this.sink = sink;
-        this.log = new StringBuilder();
+        this.detailedLogging = detailedLogging;
     }
     
     /**
@@ -30,8 +41,8 @@ public class MaxFlowFinder {
      */
     public int findMaxFlow() {
         int maxFlow = 0;
-        log.append("Starting Ford-Fulkerson algorithm with Edmonds-Karp optimization\n");
-        log.append("Source: ").append(source).append(", Sink: ").append(sink).append("\n\n");
+        System.out.println("Starting Ford-Fulkerson algorithm with Edmonds-Karp optimization");
+        System.out.println("Source: " + source + ", Sink: " + sink + "\n");
         
         //Create a residual graph
         FlowNetwork residualGraph = network.createResidualGraph();
@@ -45,26 +56,35 @@ public class MaxFlowFinder {
             int bottleneckCapacity = findBottleneckCapacity(path);
             
             //Log the augmenting path and bottleneck capacity
-            log.append("Iteration ").append(iteration++).append(":\n");
-            log.append("Augmenting Path: ");
-            for (Edge edge : path) {
-                log.append(edge.getFrom()).append(" -> ").append(edge.getTo()).append(" ");
+            if (detailedLogging) {
+                System.out.println("Iteration " + iteration++ + ":");
+                System.out.print("Augmenting Path: ");
+                for (Edge edge : path) {
+                    System.out.print(edge.getFrom() + " -> " + edge.getTo() + " ");
+                }
+                System.out.println();
+                System.out.println("Bottleneck Capacity: " + bottleneckCapacity);
+            } else if (iteration % 1000 == 0) {
+                // For large networks, only print every 1000th iteration
+                System.out.println("Completed " + iteration + " iterations...");
             }
-            log.append("\n");
-            log.append("Bottleneck Capacity: ").append(bottleneckCapacity).append("\n");
+            
+            iteration++;
             
             //Update the flow along the path
             updateFlow(path, bottleneckCapacity);
             
             //Update the maximum flow
             maxFlow += bottleneckCapacity;
-            log.append("Current Maximum Flow: ").append(maxFlow).append("\n\n");
+            if (detailedLogging) {
+                System.out.println("Current Maximum Flow: " + maxFlow + "\n");
+            }
             
             //Update the residual graph
             residualGraph = network.createResidualGraph();
         }
         
-        log.append("Final Maximum Flow: ").append(maxFlow).append("\n");
+        System.out.println("Final Maximum Flow: " + maxFlow);
         return maxFlow;
     }
     
@@ -168,10 +188,11 @@ public class MaxFlowFinder {
     }
     
     /**
-     * Returns the log of the algorithm's execution.
-     * @return The execution log
+     * Sets whether to use detailed logging.
+     * Use false for large networks to avoid excessive console output.
+     * @param detailedLogging True for detailed logging, false for minimal output
      */
-    public String getLog() {
-        return log.toString();
+    public void setDetailedLogging(boolean detailedLogging) {
+        this.detailedLogging = detailedLogging;
     }
 }

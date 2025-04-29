@@ -19,6 +19,7 @@ public class NetworkFlowApp {
             Scanner sc = new Scanner(System.in);
             System.out.print("Please enter the input file path: ");
             inputFile = sc.nextLine();
+            sc.close();
         } else {
             //Argument provided
             inputFile = args[0];
@@ -39,8 +40,15 @@ public class NetworkFlowApp {
             int source = 0;
             int sink = network.getVertices() - 1;
             
-            //Create a maximum flow finder
-            MaxFlowFinder maxFlowFinder = new MaxFlowFinder(network, source, sink);
+            //Check if this is a large network (more than 1000 vertices)
+            boolean isLargeNetwork = network.getVertices() > 1000;
+            
+            //Create a maximum flow finder with appropriate logging setting
+            MaxFlowFinder maxFlowFinder = new MaxFlowFinder(network, source, sink, !isLargeNetwork);
+            
+            if (isLargeNetwork) {
+                System.out.println("Large network detected. Detailed logging disabled to conserve memory.");
+            }
             
             //Find the maximum flow
             System.out.println("Finding maximum flow...");
@@ -49,12 +57,12 @@ public class NetworkFlowApp {
             //Print the results
             System.out.println("\nResults:");
             System.out.println("Maximum Flow: " + maxFlow);
-            System.out.println("\nDetailed Execution Log:");
-            System.out.println(maxFlowFinder.getLog());
             
-            //Print the final flow network
-            System.out.println("\nFinal Flow Network:");
-            System.out.println(network);
+            //Print the final flow network (for smaller networks only)
+            if (!isLargeNetwork) {
+                System.out.println("\nFinal Flow Network:");
+                System.out.println(network);
+            }
             
         } catch (IOException e) {
             System.err.println("Error reading input file: " + e.getMessage());
