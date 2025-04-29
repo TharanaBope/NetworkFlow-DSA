@@ -2,7 +2,7 @@ package networkflow;
 
 import java.util.*;
 
-//Implementation of the Ford-Fulkerson algorithm with Edmonds-Karp optimization for finding the maximum flow in a network.
+//Implementation of the Edmonds-Karp algorithm for finding the maximum flow in a network.
 
 public class MaxFlowFinder {
     private final FlowNetwork network;
@@ -35,13 +35,13 @@ public class MaxFlowFinder {
     }
     
     /**
-     * Finds the maximum flow in the network using the Ford-Fulkerson algorithm
-     * with Edmonds-Karp optimization (using BFS to find augmenting paths). 
+     * Finds the maximum flow in the network using the Edmonds-Karp algorithm
+     * (using BFS to find augmenting paths). 
      * @return The maximum flow value
      */
     public int findMaxFlow() {
         int maxFlow = 0;
-        System.out.println("Starting Ford-Fulkerson algorithm with Edmonds-Karp optimization");
+        System.out.println("Starting Edmonds-Karp algorithm");
         System.out.println("Source: " + source + ", Sink: " + sink + "\n");
         
         //Create a residual graph
