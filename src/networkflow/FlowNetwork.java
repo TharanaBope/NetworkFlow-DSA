@@ -99,9 +99,11 @@ public class FlowNetwork {
         sb.append("Flow Network with ").append(vertices).append(" vertices:\n");
         
         for (int i = 0; i < vertices; i++) {
-            sb.append("Vertex ").append(i).append(":\n");
-            for (Edge edge : adjacencyList.get(i)) {
-                sb.append("  ").append(edge).append("\n");
+            if (!adjacencyList.get(i).isEmpty()) {
+                sb.append("Vertex ").append(i).append(":\n");
+                for (Edge edge : adjacencyList.get(i)) {
+                    sb.append("  ").append(edge).append("\n");
+                }
             }
         }
         

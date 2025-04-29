@@ -61,16 +61,6 @@ public class NetworkFlowApp {
             System.out.println("Finding maximum flow...");
             int maxFlow = maxFlowFinder.findMaxFlow();
             
-            //Print the results
-            System.out.println("\nResults:");
-            System.out.println("Maximum Flow: " + maxFlow);
-            
-            //Print the final flow network (for smaller networks only)
-            if (!isLargeNetwork) {
-                System.out.println("\nFinal Flow Network:");
-                System.out.println(network);
-            }
-            
         } catch (IOException e) {
             System.err.println("Error reading input file: " + e.getMessage());
         } catch (NumberFormatException e) {

@@ -9,6 +9,20 @@ public class MaxFlowFinder {
     private final int source;
     private final int sink;
     private boolean detailedLogging; // Added boolean to control detailed logging
+    private List<PathInfo> augmentingPaths; // Added to store path information
+    private long startTime; // Added for timing
+    
+    private static class PathInfo {
+        List<Edge> path;
+        int flow;
+        int bottleneck;
+        
+        PathInfo(List<Edge> path, int flow, int bottleneck) {
+            this.path = path;
+            this.flow = flow;
+            this.bottleneck = bottleneck;
+        }
+    }
     
     /**
      * Constructs a maximum flow finder for the specified network.
@@ -32,6 +46,7 @@ public class MaxFlowFinder {
         this.source = source;
         this.sink = sink;
         this.detailedLogging = detailedLogging;
+        this.augmentingPaths = new ArrayList<>();
     }
     
     /**
@@ -41,8 +56,8 @@ public class MaxFlowFinder {
      */
     public int findMaxFlow() {
         int maxFlow = 0;
-        System.out.println("Starting Edmonds-Karp algorithm");
-        System.out.println("Source: " + source + ", Sink: " + sink + "\n");
+        startTime = System.nanoTime();
+        augmentingPaths.clear();
         
         //Create a residual graph
         FlowNetwork residualGraph = network.createResidualGraph();
@@ -52,39 +67,34 @@ public class MaxFlowFinder {
         int iteration = 1;
         
         while ((path = findAugmentingPath(residualGraph)) != null) {
-            //Find the bottleneck capacity (minimum residual capacity along the path)
+            //Find the bottleneck capacity
             int bottleneckCapacity = findBottleneckCapacity(path);
             
-            //Log the augmenting path and bottleneck capacity
-            if (detailedLogging) {
-                System.out.println("Iteration " + iteration++ + ":");
-                System.out.print("Augmenting Path: ");
-                for (Edge edge : path) {
-                    System.out.print(edge.getFrom() + " -> " + edge.getTo() + " ");
-                }
-                System.out.println();
-                System.out.println("Bottleneck Capacity: " + bottleneckCapacity);
+            //Store path information only for small networks
+            if (network.getVertices() < 1000) {
+                augmentingPaths.add(new PathInfo(new ArrayList<>(path), maxFlow + bottleneckCapacity, bottleneckCapacity));
             } else if (iteration % 1000 == 0) {
-                // For large networks, only print every 1000th iteration
+                // For large networks, print progress every 1000 iterations
                 System.out.println("Completed " + iteration + " iterations...");
             }
-            
-            iteration++;
             
             //Update the flow along the path
             updateFlow(path, bottleneckCapacity);
             
             //Update the maximum flow
             maxFlow += bottleneckCapacity;
-            if (detailedLogging) {
-                System.out.println("Current Maximum Flow: " + maxFlow + "\n");
-            }
             
             //Update the residual graph
             residualGraph = network.createResidualGraph();
+            iteration++;
         }
         
-        System.out.println("Final Maximum Flow: " + maxFlow);
+        if (network.getVertices() < 1000) {
+            printResults(maxFlow);
+        } else {
+            // For large networks, only print the maximum flow
+            System.out.println("\nMaximum Flow: " + maxFlow);
+        }
         return maxFlow;
     }
     
@@ -185,6 +195,48 @@ public class MaxFlowFinder {
                 }
             }
         }
+    }
+    
+    private void printResults(int maxFlow) {
+        long endTime = System.nanoTime();
+        double runtimeMs = (endTime - startTime) / 1_000_000.0; // Convert to milliseconds
+        
+        System.out.println("============================================================");
+        System.out.println("                    NETWORK FLOW DETAILS                    ");
+        System.out.println("============================================================\n");
+        
+        System.out.println("NETWORK STATISTICS:");
+        System.out.println("Total Nodes: " + network.getVertices());
+        System.out.println("Source Node: " + source);
+        System.out.println("Sink Node: " + sink + "\n");
+        
+        System.out.println("EDGE FLOW DETAILS:");
+        System.out.println("Final Flow Network:");
+        System.out.println(network);
+        
+        System.out.println("AUGMENTING PATHS:");
+        for (int i = 0; i < augmentingPaths.size(); i++) {
+            PathInfo pathInfo = augmentingPaths.get(i);
+            System.out.printf("Path %2d (Flow = %d, Bottleneck = %d): ", i + 1, pathInfo.flow, pathInfo.bottleneck);
+            
+            for (int j = 0; j < pathInfo.path.size(); j++) {
+                Edge edge = pathInfo.path.get(j);
+                System.out.print(edge.getFrom() + "→" + edge.getTo());
+                if (j < pathInfo.path.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println();
+        }
+        
+        System.out.println("\nTotal Paths Found: " + augmentingPaths.size());
+        System.out.println("============================================================");
+        System.out.println("MAXIMUM FLOW: " + maxFlow + "\n");
+        
+        System.out.println("TIME COMPLEXITY:");
+        System.out.println("- Edmonds-Karp Algorithm: O(V·E²)");
+        System.out.println("  where V = " + network.getVertices() + " nodes, E = edges");
+        System.out.printf("Runtime: %.2f ms\n", runtimeMs);
     }
     
     /**
