@@ -1,5 +1,7 @@
 package networkflow;
 
+//Student Name: Tharana Navithaka Bopearachchi
+// Student ID: 20232948
 //Represents an edge in the flow network.
 
 public class Edge {
