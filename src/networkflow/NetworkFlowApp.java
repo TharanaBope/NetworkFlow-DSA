@@ -7,23 +7,30 @@ import java.util.Scanner;
 
 public class NetworkFlowApp {
     
+    // Base path for benchmark files
+    private static final String BENCHMARKS_PATH = "benchmarks/";
+    
     /**
      * Main method to run the application.
-     * @param args Command line arguments - expects a file path to the network description
+     * @param args Command line arguments - expects a file name within the benchmarks directory
      */
     public static void main(String[] args) {
+        String fileName;
         String inputFile;
 
         if (args.length < 1) {
             //No argument provided, ask the user
             Scanner sc = new Scanner(System.in);
-            System.out.print("Please enter the input file path: ");
-            inputFile = sc.nextLine();
+            System.out.print("Please enter the benchmark file name: ");
+            fileName = sc.nextLine();
             sc.close();
         } else {
             //Argument provided
-            inputFile = args[0];
+            fileName = args[0];
         }
+        
+        // Construct the full path using the benchmarks directory
+        inputFile = BENCHMARKS_PATH + fileName;
         
         try {
             //Parse the network from the input file
