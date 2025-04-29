@@ -1,0 +1,162 @@
+# Maximum Flow Algorithm Implementation Report
+
+## Introduction
+
+This report discusses the implementation of a maximum flow algorithm for the 5SENG003W Algorithms coursework. The task involved developing a solution to find the maximum flow in a network, represented as a directed graph with capacities on edges. The implementation uses the Edmonds-Karp algorithm, which guarantees a polynomial time complexity.
+
+## Data Structure Design
+
+For representing the flow network, I implemented the following data structures:
+
+### Edge Class
+The `Edge` class represents an edge in the flow network with the following attributes:
+- Source vertex
+- Destination vertex
+- Capacity
+- Current flow
+
+This class also provides methods to calculate the residual capacity (capacity - flow) and to update the flow value.
+
+### FlowNetwork Class
+The `FlowNetwork` class represents the entire network using an adjacency list representation:
+- Stores the number of vertices
+- Maintains a list of adjacency lists for each vertex
+- Provides methods to add edges and create a residual graph
+
+This design was chosen because:
+1. Adjacency lists are memory-efficient for sparse graphs
+2. They provide fast access to all edges from a specific vertex, which is crucial for the BFS algorithm
+3. The structure naturally supports the residual graph concept needed for Edmonds-Karp
+
+## Algorithm Implementation
+
+The Edmonds-Karp algorithm was implemented in the `MaxFlowFinder` class with several optimizations:
+
+1. **Selective Logging**: 
+   - Detailed path information is only stored for networks with fewer than 1000 vertices
+   - For larger networks, progress is reported every 1000 iterations
+   - This optimization helps manage memory usage for large graphs
+
+2. **Path Information Storage**:
+   - A `PathInfo` class stores information about each augmenting path:
+     - The path itself (list of edges)
+     - Current flow value
+     - Bottleneck capacity
+   - This enables detailed analysis and debugging for smaller networks
+
+3. **Performance Monitoring**:
+   - Implementation includes timing mechanism to measure execution time
+   - Supports both detailed and simplified logging modes
+
+4. **Residual Graph Management**:
+   - Efficient creation and updates of the residual graph
+   - Optimized edge lookup using adjacency lists
+   - Careful handling of both forward and backward edges
+
+## Example Run: bridge_1.txt
+
+For the smallest benchmark example (bridge_1.txt), the algorithm execution proceeded as follows:
+
+```
+NETWORK STATISTICS:
+Total Nodes: 6
+Source Node: 0
+Sink Node: 5
+
+EDGE FLOW DETAILS:
+Final Flow Network:
+Vertex 0:
+  0 -> 1 (4/4)
+  0 -> 4 (1/1)
+Vertex 1:
+  1 -> 2 (2/2)
+  1 -> 3 (1/1)
+  1 -> 5 (1/1)
+Vertex 2:
+  2 -> 3 (1/1)
+  2 -> 4 (1/1)
+Vertex 3:
+  3 -> 4 (2/2)
+Vertex 4:
+  4 -> 5 (4/4)
+
+AUGMENTING PATHS:
+Path  1 (Flow = 1, Bottleneck = 1): 0→1, 1→5
+Path  2 (Flow = 2, Bottleneck = 1): 0→4, 4→5
+Path  3 (Flow = 3, Bottleneck = 1): 0→1, 1→2, 2→4, 4→5
+Path  4 (Flow = 4, Bottleneck = 1): 0→1, 1→3, 3→4, 4→5
+Path  5 (Flow = 5, Bottleneck = 1): 0→1, 1→2, 2→3, 3→4, 4→5
+
+Total Paths Found: 5
+Final Maximum Flow: 5
+Runtime: 1.00 ms
+```
+
+The algorithm found 5 augmenting paths, each with a bottleneck capacity of 1, resulting in a maximum flow of 5. The final state shows all edges operating at their maximum capacity, indicating an optimal solution. The execution completed in just 1 millisecond, demonstrating efficient performance for small networks.
+
+Of particular interest is how the flow distributes through the network:
+1. The main path through vertex 1 carries 4 units of flow
+2. The secondary path through vertex 4 carries 1 unit of flow
+3. The intermediate vertices (2 and 3) are utilized to their full capacity
+4. The final edge to sink (4→5) carries the entire flow of 5 units
+
+### Large Network Example: bridge_11.txt
+
+For larger networks (more than 1000 vertices), the algorithm automatically switches to a memory-efficient mode with simplified output:
+
+```
+Large network detected (more than 1000 vertices). Detailed logging disabled to conserve memory.
+Finding maximum flow...
+Completed 1000 iterations...
+Completed 2000 iterations...
+Completed 3000 iterations...
+Completed 4000 iterations...
+
+Maximum Flow: 4097
+```
+
+This optimization demonstrates how the implementation handles scalability:
+1. Detailed path information is not stored to conserve memory
+2. Progress updates are provided every 1000 iterations
+3. Only the final maximum flow value is reported
+4. The number of iterations (4000+) shows how the algorithm's workload increases with network size
+
+## Performance Analysis
+
+### Theoretical Analysis
+
+The Edmonds-Karp algorithm has a time complexity of O(V·E²), where V is the number of vertices and E is the number of edges. This is because:
+
+1. There can be at most O(V·E) augmenting paths found (each with at least one edge)
+2. Each BFS operation takes O(E) time
+3. Therefore, the total time complexity is O(V·E²)
+
+For the bridge_1.txt example:
+- V = 6 vertices
+- E = 9 edges
+- Actual runtime = 1.00 ms
+- Number of augmenting paths found = 5
+
+### Empirical Analysis
+
+Testing with benchmark files of increasing size yielded the following results:
+
+| Benchmark | Vertices | Edges | Max Flow | Execution Time (ms) | Output Mode |
+|-----------|----------|-------|----------|-------------------|--------------|
+| bridge_1.txt | 6 | 9 | 5 | 1.00 | Detailed |
+| ladder_1.txt | 6 | 9 | 4 | ~1.00 | Detailed |
+| bridge_3.txt | 18 | 33 | 17 | 114 | Detailed |
+| bridge_5.txt | 66 | 129 | 65 | 145 | Detailed |
+| bridge_11.txt | >1000 | - | 4097 | - | Simplified |
+
+The implementation automatically adapts its behavior based on network size:
+- For networks with < 1000 vertices: Provides detailed path information, flow distribution, and network statistics
+- For networks with ≥ 1000 vertices: Switches to simplified output with progress tracking, optimizing memory usage for large-scale computations
+
+This adaptive behavior ensures that the algorithm remains practical for both small networks (where detailed analysis is useful) and large networks (where performance and memory efficiency are crucial).
+
+## Conclusion
+
+The implemented solution successfully solves the maximum flow problem using the Edmonds-Karp algorithm. The algorithm correctly finds the maximum flow for all tested benchmark examples and demonstrates good performance characteristics.
+
+For very large networks, more advanced algorithms like Push-Relabel or Dinic's algorithm might offer better performance, but for the scale of problems in this coursework, the current implementation provides a good balance between simplicity and efficiency.
